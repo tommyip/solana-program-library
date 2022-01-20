@@ -221,6 +221,10 @@ impl CurveCalculator for StableCurve {
         // TODO are all amps valid?
         Ok(())
     }
+
+    fn leverage(&self) -> Option<u64> {
+        Some(self.amp * 2)
+    }
 }
 
 /// IsInitialized is required to use `Pack::pack` and `Pack::unpack`
