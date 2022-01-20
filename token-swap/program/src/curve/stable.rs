@@ -23,7 +23,7 @@ const N_COINS: u8 = 2;
 const N_COINS_SQUARED: u8 = 4;
 
 /// Returns self to the power of b
-fn checked_u8_power(a: &U256, b: u8) -> Option<U256> {
+pub fn checked_u8_power(a: &U256, b: u8) -> Option<U256> {
     let mut result = *a;
     for _ in 1..b {
         result = result.checked_mul(*a)?;
@@ -32,7 +32,7 @@ fn checked_u8_power(a: &U256, b: u8) -> Option<U256> {
 }
 
 /// Returns self multiplied by b
-fn checked_u8_mul(a: &U256, b: u8) -> Option<U256> {
+pub fn checked_u8_mul(a: &U256, b: u8) -> Option<U256> {
     let mut result = *a;
     for _ in 1..b {
         result = result.checked_add(*a)?;
@@ -41,7 +41,7 @@ fn checked_u8_mul(a: &U256, b: u8) -> Option<U256> {
 }
 
 /// Returns true of values differ not more than by 1
-fn almost_equal(a: &U256, b: &U256) -> Option<bool> {
+pub fn almost_equal(a: &U256, b: &U256) -> Option<bool> {
     if a > b {
         Some(a.checked_sub(*b)? <= U256::one())
     } else {
@@ -57,7 +57,12 @@ pub struct StableCurve {
 }
 
 /// d = (leverage * sum_x + d_product * n_coins) * initial_d / ((leverage - 1) * initial_d + (n_coins + 1) * d_product)
-fn calculate_step(initial_d: &U256, leverage: u64, sum_x: u128, d_product: &U256) -> Option<U256> {
+pub fn calculate_step(
+    initial_d: &U256,
+    leverage: u64,
+    sum_x: u128,
+    d_product: &U256,
+) -> Option<U256> {
     let leverage_mul = U256::from(leverage).checked_mul(sum_x.into())?;
     let d_p_mul = checked_u8_mul(&d_product, N_COINS)?;
 
@@ -74,7 +79,7 @@ fn calculate_step(initial_d: &U256, leverage: u64, sum_x: u128, d_product: &U256
 /// Compute stable swap invariant (D)
 /// Equation:
 /// A * sum(x_i) * n**n + D = A * D * n**n + D**(n+1) / (n**n * prod(x_i))
-fn compute_d(leverage: u64, amount_a: u128, amount_b: u128) -> Option<u128> {
+pub fn compute_d(leverage: u64, amount_a: u128, amount_b: u128) -> Option<u128> {
     let amount_a_times_coins = checked_u8_mul(&U256::from(amount_a), N_COINS)?;
     let amount_b_times_coins = checked_u8_mul(&U256::from(amount_b), N_COINS)?;
     let sum_x = amount_a.checked_add(amount_b)?; // sum(x_i), a.k.a S
@@ -109,7 +114,7 @@ fn compute_d(leverage: u64, amount_a: u128, amount_b: u128) -> Option<u128> {
 /// Solve for y:
 /// y**2 + y * (sum' - (A*n**n - 1) * D / (A * n**n)) = D ** (n + 1) / (n ** (2 * n) * prod' * A)
 /// y**2 + b*y = c
-fn compute_new_destination_amount(
+pub fn compute_new_destination_amount(
     leverage: u64,
     new_source_amount: u128,
     d_val: u128,
