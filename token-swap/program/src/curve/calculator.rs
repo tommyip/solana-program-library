@@ -168,7 +168,7 @@ pub trait CurveCalculator: Debug + DynPack {
         swap_token_b_amount: u128,
     ) -> Option<PreciseNumber>;
 
-    fn leverage(&self) -> Option<u64> {
+    fn amp(&self) -> Option<u64> {
         None
     }
 }

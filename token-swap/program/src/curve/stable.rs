@@ -222,8 +222,8 @@ impl CurveCalculator for StableCurve {
         Ok(())
     }
 
-    fn leverage(&self) -> Option<u64> {
-        Some(self.amp * 2)
+    fn amp(&self) -> Option<u64> {
+        Some(self.amp)
     }
 }
 
